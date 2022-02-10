@@ -47,6 +47,11 @@ DEVICE_CLASS_PRESSURE = "pressure"
 DEVICE_CLASS_TEMPERATURE = "temperature"
 DEVICE_CLASS_TIMESTAMP = "timestamp"
 
+# State classes:
+STATE_CLASS_MEASUREMENT = "measurement"
+STATE_CLASS_TOTAL = "total"
+STATE_CLASS_TOTAL_INCREASING = "total_increasing"
+
 # Unit classes:
 UNIT_CLASS_DISTANCE = "distance"
 UNIT_CLASS_PRESSURE = "pressure"
@@ -102,6 +107,7 @@ class EntityDescription:
 
     device_class: Optional[str] = None
     icon: Optional[str] = None
+    state_class: Optional[str] = None
     unit: Optional[str] = None
     unit_class: Optional[str] = None
 
@@ -110,6 +116,7 @@ ENTITY_DESCRIPTIONS = {
     DATA_POINT_GLOB_BAROM: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_PRESSURE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_PRESSURE,
     ),
     DATA_POINT_GLOB_BATT: EntityDescription(
@@ -124,51 +131,61 @@ ENTITY_DESCRIPTIONS = {
     DATA_POINT_GLOB_GUST: EntityDescription(
         platform=PLATFORM_SENSOR,
         icon="mdi:weather-windy",
+        state_class=STATE_CLASS_TOTAL,
         unit_class=UNIT_CLASS_WIND,
     ),
     DATA_POINT_GLOB_HUMIDITY: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_HUMIDITY,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=PERCENTAGE,
     ),
     DATA_POINT_GLOB_MOISTURE: EntityDescription(
         platform=PLATFORM_SENSOR,
         icon="mdi:water-percent",
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=PERCENTAGE,
     ),
     DATA_POINT_GLOB_RAIN: EntityDescription(
         platform=PLATFORM_SENSOR,
         icon="mdi:water",
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_RAIN,
     ),
     DATA_POINT_GLOB_TEMP: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_TEMPERATURE,
     ),
     DATA_POINT_GLOB_WIND: EntityDescription(
         platform=PLATFORM_SENSOR,
         icon="mdi:weather-windy",
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_WIND,
     ),
     DATA_POINT_CO2: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_CO2,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=CONCENTRATION_PARTS_PER_MILLION,
     ),
     DATA_POINT_DEWPOINT: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_TEMPERATURE,
     ),
     DATA_POINT_FEELSLIKE: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_TEMPERATURE,
     ),
     DATA_POINT_HEATINDEX: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_TEMPERATURE,
     ),
     DATA_POINT_LIGHTNING: EntityDescription(
@@ -188,36 +205,43 @@ ENTITY_DESCRIPTIONS = {
     DATA_POINT_PM25: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_PM25,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     ),
     DATA_POINT_PM25_24H: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_PM25,
+        state_class=STATE_CLASS_TOTAL_INCREASING,
         unit=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     ),
     DATA_POINT_SOLARRADIATION: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_ILLUMINANCE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=IRRADIATION_WATTS_PER_SQUARE_METER,
     ),
     DATA_POINT_SOLARRADIATION_LUX: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_ILLUMINANCE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=LIGHT_LUX,
     ),
     DATA_POINT_SOLARRADIATION_PERCEIVED: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_ILLUMINANCE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=PERCENTAGE,
     ),
     DATA_POINT_UV: EntityDescription(
         platform=PLATFORM_SENSOR,
         icon="mdi:weather-sunny",
+        state_class=STATE_CLASS_MEASUREMENT,
         unit=INDEX,
     ),
     DATA_POINT_WINDCHILL: EntityDescription(
         platform=PLATFORM_SENSOR,
         device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
         unit_class=UNIT_CLASS_TEMPERATURE,
     ),
     DATA_POINT_WINDDIR: EntityDescription(
@@ -324,12 +348,14 @@ class HassDiscovery:
             "unique_id": f"{self._device.unique_id}_{key}",
         }
 
-        if description.device_class:
-            self._config_payloads[key]["device_class"] = description.device_class
-        if description.icon:
-            self._config_payloads[key]["icon"] = description.icon
-        if description.unit:
-            self._config_payloads[key]["unit_of_measurement"] = description.unit
+        for prop, attr in (
+            (description.device_class, "device_class"),
+            (description.icon, "icon"),
+            (description.state_class, "state_class"),
+            (description.unit, "unit_of_measurement"),
+        ):
+            if prop is not None:
+                self._config_payloads[key][attr] = prop
 
         return self._config_payloads[key]
 
