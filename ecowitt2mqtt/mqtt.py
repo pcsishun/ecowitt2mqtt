@@ -1,14 +1,20 @@
 """Define aiohttp routes."""
 import asyncio
 import json
+# import pymongo
+
 from typing import Any, Dict, Union
 
 from aiohttp import web
 from asyncio_mqtt import Client, MqttError
 
-from ecowitt2mqtt.const import LOGGER
-from ecowitt2mqtt.data import DataProcessor
-from ecowitt2mqtt.hass import HassDiscovery
+from const import LOGGER # ecowitt2mqtt
+from data import DataProcessor # ecowitt2mqtt
+from hass import HassDiscovery # ecowitt2mqtt
+
+from flask import Flask, request
+app = Flask(__name__)
+ 
 
 DEFAULT_MAX_MQTT_CALLS = 10
 
@@ -61,21 +67,43 @@ async def _async_publish_to_hass_discovery(
 
     LOGGER.info("Published to HASS discovery: %s", data)
 
-
+@app.route('/weathersending', methods=['POST'])
 async def _async_publish_to_topic(
     client: Client, data: Dict[str, Any], topic: str
 ) -> None:
     """Publish data to a single MQTT topic."""
     LOGGER.debug("Publishing entire device payload to single topic: %s", topic)
+ 
+    ## connect to mongodb ## 
+    # myclient = pymongo.MongoClient("mongodb://localhost:27017/")
+    # mydb = myclient["database_name"]
+    # mycol = mydb["collection_name"]
 
-    try:
-        async with client:
-            await client.publish(topic, _generate_payload(data))
-    except MqttError as err:
-        LOGGER.error("Error while publishing to %s: %s", topic, err)
-        return
+    data_weather = {
+        "tempin": float(data['tempin']), 
+        "humidityin": float(data['humidityin']), 
+        "baromrel":float(data['baromrel']), 
+        "baromabs":float(data['baromabs'])
+        }
+    
+    print(data_weather)
+    return data_weather
 
-    LOGGER.info("Published to %s: %s", topic, data)
+    # mycol.insert_one(data_weather)
+
+
+
+    # try:
+    #     async with client:
+    #         LOGGER.error("Chop Hee OK: " + data)
+    #         await client.publish(topic, _generate_payload(data))
+    # except MqttError as err:
+    #     # print("this err ==> "+err + "and data ==>" + data)
+    #     # LOGGER.info("Chop Hee FAIL: %s", data)
+    #     LOGGER.error("Error while publishing to %s: %s", topic, err)
+    #     return
+
+    # LOGGER.info("Published to %s: %s", topic, data)
 
 
 async def async_publish_payload(request: web.Request) -> None:

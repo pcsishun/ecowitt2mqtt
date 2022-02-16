@@ -4,7 +4,7 @@ from functools import partial
 import inspect
 from typing import Any, Callable, Dict, Optional, Union
 
-from ecowitt2mqtt.const import (
+from const import (
     DATA_POINT_DEWPOINT,
     DATA_POINT_FEELSLIKE,
     DATA_POINT_GLOB_BAROM,
@@ -25,10 +25,10 @@ from ecowitt2mqtt.const import (
     DATA_POINT_WINDSPEEDMPH,
     UNIT_SYSTEM_METRIC,
 )
-from ecowitt2mqtt.device import get_device_from_raw_payload
-from ecowitt2mqtt.util.battery import calculate_battery
-from ecowitt2mqtt.util.distance import calculate_distance
-from ecowitt2mqtt.util.meteo import (
+from device import get_device_from_raw_payload
+from util.battery import calculate_battery
+from util.distance import calculate_distance
+from util.meteo import (
     calculate_dew_point,
     calculate_feels_like,
     calculate_heat_index,
@@ -40,7 +40,7 @@ from ecowitt2mqtt.util.meteo import (
     calculate_wind_chill,
     calculate_wind_speed,
 )
-from ecowitt2mqtt.util.time import calculate_epoch
+from util.time import calculate_epoch
 
 DEFAULT_KEYS_TO_IGNORE = ["PASSKEY", "dateutc", "freq", "model", "stationtype"]
 

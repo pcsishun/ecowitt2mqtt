@@ -1,7 +1,7 @@
 """Define an Ecowitt device."""
 from typing import Any, Dict, NamedTuple, Optional
 
-from ecowitt2mqtt.const import LOGGER
+from const import LOGGER
 
 DEFAULT_MANUFACTURER = "Unknown"
 DEFAULT_NAME = "Unknown Device"

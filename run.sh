@@ -1,4 +1,8 @@
 #!/bin/bash
+MQTT_BROKER="137.184.119.233"
+MQTT_TOPIC="topic"
+MQTT_PORT="8080"
+
 if [ -z "${MQTT_BROKER}" ]; then
     echo "Missing required environment variable: MQTT_BROKER"
     exit 1
@@ -55,4 +59,4 @@ if [ -n "${OUTPUT_UNIT_SYSTEM}" ]; then
     PARAMS+=(--output-unit-system="${OUTPUT_UNIT_SYSTEM}")
 fi
 
-python3 /usr/src/ecowitt2mqtt/main.py "${PARAMS[@]}"
+python3 ./ecowitt2mqtt/main.py "${PARAMS[@]}"

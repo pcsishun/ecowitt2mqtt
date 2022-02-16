@@ -3,7 +3,7 @@ import argparse
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Union
 
-from ecowitt2mqtt.const import (
+from const import (
     DATA_POINT_CO2,
     DATA_POINT_DEWPOINT,
     DATA_POINT_FEELSLIKE,
@@ -32,7 +32,7 @@ from ecowitt2mqtt.const import (
     UNIT_SYSTEM_IMPERIAL,
     UNIT_SYSTEM_METRIC,
 )
-from ecowitt2mqtt.device import Device
+from device import Device
 
 PLATFORM_BINARY_SENSOR = "binary_sensor"
 PLATFORM_SENSOR = "sensor"

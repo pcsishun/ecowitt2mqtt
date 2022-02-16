@@ -4,15 +4,15 @@ import logging
 
 from aiohttp import web
 
-from ecowitt2mqtt.const import LOGGER, UNIT_SYSTEM_IMPERIAL
-from ecowitt2mqtt.mqtt import async_publish_payload
-
+from const import LOGGER, UNIT_SYSTEM_IMPERIAL #ecowitt2mqtt
+from mqtt import async_publish_payload #ecowitt2mqtt
+ 
 DEFAULT_AIOHTTP_ENDPOINT = "/data/report"
 DEFAULT_AIOHTTP_PORT = 8080
 DEFAULT_HASS_DISCOVERY_PREFIX = "homeassistant"
 DEFAULT_LOG_LEVEL_STRING = "INFO"
 DEFAULT_MQTT_PORT = 1883
-
+print("start main...")
 
 def get_arguments() -> argparse.Namespace:
     """Get passed-in arguments."""
@@ -132,6 +132,7 @@ def main() -> None:
     LOGGER.debug("Using arguments: %s", args)
 
     app = web.Application()
+    print("args.endpoint ===>"+ args.endpoint)
     app.add_routes([web.post(args.endpoint, async_publish_payload)])  # type: ignore
 
     app["args"] = args
